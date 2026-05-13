@@ -1,0 +1,9 @@
+radiusRange	105	290
+sensitivity	0.9724	
+edgeThreshold	0.05	
+min_center_distance	200	
+interactive_selection	1	
+dtol	10	
+boundaryType	rectangle	
+time	26-Apr-2025 17:51:34	
+imgDir	result1	

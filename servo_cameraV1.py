@@ -9,11 +9,11 @@ try:
     ser = serial.Serial('COM7', 115200, timeout=1)
     time.sleep(2)
 
-    print("Connected! Press Enter to capture both photos")
+    print("Connected. Press Enter to capture both photos")
     print("Press Ctrl+C to exit")
 
     while True:
-        input("Press Enter to start capture sequence...")
+        input("Press Enter to start capture sequence")
 
         def send_cmd(cmd):
             ser.write((cmd + '\n').encode())

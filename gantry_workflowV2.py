@@ -4,19 +4,19 @@ def set_zero_position(self):
             return
             
         try:
-            # Set the current position as origin (0,0)
+
             self.gantry.GCommand('DP 0,0')
             
-            # Update status
+
             self.status_var.set("Position zeroed - current position is now (0,0)")
             
-            # Update display immediately
+
             self.current_x = 0
             self.current_y = 0
             self.position_var.set("X: 0, Y: 0")
             
         except Exception as e:
-            self.status_var.set(f"Zero position error: {e}")# -*- coding: utf-8 -*-
+            self.status_var.set(f"Zero position error: {e}")
 """
 Integrated Gantry & Camera Control System
 
@@ -44,32 +44,31 @@ class IntegratedGantryCameraGUI:
 
     
         
-        # Set up the main window
+
         self.root.geometry("800x700")
         self.root.configure(bg='#f0f0f0')
         
-        # Connection status
+
         self.connected = False
         self.gantry = None
         self.ser = None
         self.camera_connected = False
         
-        # Movement parameters
-        self.step_size = 5000  # Default step size in encoder units
-        self.speed = 50000     # Default speed
-        
-        # Position tracking
+
+        self.step_size = 5000  
+        self.speed = 50000     
+
         self.current_x = 0
         self.current_y = 0
         
-        # Imaging parameters
+
         self.start_x = None
         self.start_y = None
-        self.x_dimension = 500000  # Default X dimension in encoder steps
-        self.y_dimension = 500000  # Default Y dimension in encoder steps
-        self.overlap = 0.2         # Default 20% overlap
+        self.x_dimension = 500000  
+        self.y_dimension = 500000  
+        self.overlap = 0.2         
         
-        # Camera parameters (defaults)
+
         self.camera_width_px = 9504
         self.camera_height_px = 6336
         self.fov_width_mm = 268.29  # 10 9/16 inches in mm
@@ -83,7 +82,7 @@ class IntegratedGantryCameraGUI:
         self.y_limit = 3084965
         
         # Imaging options
-        self.auto_capture = BooleanVar(value=True)  # Default to automatic capture
+        self.auto_capture = BooleanVar(value=True)  
         
         # Imaging status
         self.is_imaging = False
@@ -116,7 +115,7 @@ class IntegratedGantryCameraGUI:
         self.base_save_dir = os.path.join(current_dir, "captured_images")
         os.makedirs(self.base_save_dir, exist_ok=True)
         
-        # Create session-specific directory
+
         now = datetime.now()
         session_name = now.strftime("%Y%m%d_%H%M%S")
         self.session_dir = os.path.join(self.base_save_dir, session_name)
@@ -153,7 +152,7 @@ class IntegratedGantryCameraGUI:
                                       bg='white', width=25, font=('Arial', 12))
         self.position_label.grid(row=0, column=1, padx=5)
         
-        # Set start position button
+
         self.set_start_button = tk.Button(position_frame, text="Set as Start Position", 
                                          command=self.set_start_position,
                                          bg='#FF9800', fg='white', width=15, height=1, state=tk.DISABLED)
@@ -218,13 +217,12 @@ class IntegratedGantryCameraGUI:
                                           bg='#f44336', fg='white', width=15, height=1, state=tk.DISABLED)
         self.gantry_disconnect_button.grid(row=1, column=2, padx=10, pady=5)
         
-        # Apply Settings button instead of Home button
+
         self.apply_gantry_settings_button = tk.Button(settings_frame, text="Apply Settings", 
                                                     command=self.apply_gantry_settings,
                                                     bg='#2196F3', fg='white', width=15, height=1)
         self.apply_gantry_settings_button.grid(row=0, column=3, rowspan=2, padx=10, pady=5)
-        
-        # Step size control (moved from header to gantry tab)
+
         tk.Label(movement_frame, text="Step Size:", font=('Arial', 12)).pack(anchor="w", padx=10, pady=(10,0))
         step_size_frame = tk.Frame(movement_frame)
         step_size_frame.pack(anchor="w", padx=10, pady=(0,10))
@@ -251,12 +249,12 @@ class IntegratedGantryCameraGUI:
                                               bg='#FF9800', fg='white', state=tk.DISABLED)
         self.return_to_start_button.pack(side=tk.LEFT, padx=10)
         
-        # Go Home button (in control frame)
+        # Go Home button 
         home_button = tk.Button(control_frame, text="Home", width=5, height=2,
                                command=lambda: self.goto_home(None))
         home_button.grid(row=0, column=0, padx=5, pady=5)
         
-        # Control pad (arrow buttons)
+        # Control pad 
         up_button = tk.Button(control_frame, text="▲", width=5, height=2,
                              command=lambda: self.move_up(None))
         up_button.grid(row=0, column=1, padx=5, pady=5)
@@ -279,7 +277,7 @@ class IntegratedGantryCameraGUI:
                                 command=lambda: self.move_right(None))
         right_button.grid(row=1, column=2, padx=5, pady=5)
         
-        # Simplified instructions
+
         instructions = """
         1. Use arrow keys to navigate to desired start position
         2. Click "Set as Start Position" to mark the current position as the start
@@ -293,7 +291,7 @@ class IntegratedGantryCameraGUI:
 
     def create_camera_tab(self, parent):
         """Create camera control tab"""
-        # Create frames
+
         config_frame = tk.LabelFrame(parent, text="Camera Configuration", padx=10, pady=10)
         config_frame.pack(fill="x", padx=10, pady=10)
         
@@ -324,7 +322,7 @@ class IntegratedGantryCameraGUI:
                                 bg='#2196F3', fg='white', width=15, height=1)
         apply_button.grid(row=0, column=3, rowspan=2, padx=10, pady=5)
         
-        # --- Manual Control Frame ---
+
         # Take Photo Button
         self.take_photo_button = tk.Button(control_frame, text="Take Photo (No Filter)", 
                                          command=lambda: self.take_manual_photo(False),
@@ -386,7 +384,7 @@ class IntegratedGantryCameraGUI:
         control_frame = tk.Frame(parent, padx=10, pady=10)
         control_frame.pack(fill="x", padx=10, pady=10)
         
-        # --- Parameter Frame ---
+
         # Overlap
         tk.Label(param_frame, text="Overlap (%):", width=15, anchor='e').grid(row=0, column=0, padx=5, pady=5)
         self.overlap_var = tk.StringVar(value=str(self.overlap * 100))
@@ -404,8 +402,7 @@ class IntegratedGantryCameraGUI:
         self.y_dim_var = tk.StringVar(value=str(self.y_dimension / self.y_scale))
         y_dim_entry = tk.Entry(param_frame, textvariable=self.y_dim_var, width=10)
         y_dim_entry.grid(row=2, column=1, padx=5, pady=5)
-        
-        # --- Start Position Frame ---
+
         # Start X
         tk.Label(start_frame, text="Start X:", width=15, anchor='e').grid(row=0, column=0, padx=5, pady=5)
         self.start_x_var = tk.StringVar(value="Not set")
@@ -416,7 +413,7 @@ class IntegratedGantryCameraGUI:
         self.start_y_var = tk.StringVar(value="Not set")
         tk.Label(start_frame, textvariable=self.start_y_var, width=15, anchor='w').grid(row=1, column=1, padx=5, pady=5)
         
-        # --- Camera Settings Frame ---
+
         # Camera Resolution
         tk.Label(camera_frame, text="Resolution (px):", width=15, anchor='e').grid(row=0, column=0, padx=5, pady=5)
         self.resolution_var = tk.StringVar(value=f"{self.camera_width_px} × {self.camera_height_px}")
@@ -428,13 +425,12 @@ class IntegratedGantryCameraGUI:
         fov_entry = tk.Entry(camera_frame, textvariable=self.fov_width_var, width=10)
         fov_entry.grid(row=1, column=1, padx=5, pady=5)
         
-        # --- Capture Options Frame ---
+
         # Auto vs Manual capture
         auto_capture_check = tk.Checkbutton(capture_frame, text="Automatic Capture (No user confirmation)",
                                            variable=self.auto_capture)
         auto_capture_check.grid(row=0, column=0, columnspan=2, padx=5, pady=5, sticky='w')
-        
-        # --- Calculated Values Frame ---
+
         # Calculate Button
         calculate_button = tk.Button(calc_frame, text="Calculate Grid", command=self.calculate_grid)
         calculate_button.grid(row=0, column=0, columnspan=2, padx=5, pady=5)
@@ -454,7 +450,7 @@ class IntegratedGantryCameraGUI:
         self.total_images_var = tk.StringVar(value="Not calculated")
         tk.Label(calc_frame, textvariable=self.total_images_var, width=20, anchor='w').grid(row=3, column=1, padx=5, pady=5)
         
-        # --- Control Frame ---
+ 
         # Start Imaging Button
         self.start_imaging_button = tk.Button(control_frame, text="Start Imaging Sequence", 
                                              command=self.start_imaging_sequence,
@@ -472,8 +468,7 @@ class IntegratedGantryCameraGUI:
         # Create frames
         limits_frame = tk.LabelFrame(parent, text="Safety Limits (Encoder Units)", padx=10, pady=10)
         limits_frame.pack(fill="x", padx=10, pady=10)
-        
-        # --- Safety Limits Frame ---
+
         # X Limit
         tk.Label(limits_frame, text="X Limit:", width=15, anchor='e').grid(row=0, column=0, padx=5, pady=5)
         self.x_limit_var = tk.StringVar(value=str(self.x_limit))
@@ -538,8 +533,7 @@ class IntegratedGantryCameraGUI:
             if new_x_limit <= 0 or new_y_limit <= 0:
                 messagebox.showerror("Invalid Limits", "Limits must be positive values")
                 return
-                
-            # Confirm with the user
+
             if messagebox.askyesno("Confirm Safety Limits", 
                                   f"Are you sure you want to set the safety limits to:\nX: {new_x_limit}\nY: {new_y_limit}"):
                 self.x_limit = new_x_limit
@@ -563,14 +557,14 @@ class IntegratedGantryCameraGUI:
             return
             
         try:
-            # Get connection parameters from UI
+
             port = self.gantry_port.get()
             baud = self.gantry_baud.get()
             
             self.status_var.set(f"Connecting to {port} at {baud}...")
             self.root.update()
             
-            # Start connection in a thread to keep UI responsive
+      
             threading.Thread(target=lambda: self._connect_thread(port, baud), daemon=True).start()
         except Exception as e:
             self.status_var.set(f"Connection error: {e}")
@@ -584,10 +578,10 @@ class IntegratedGantryCameraGUI:
             
             self.connected = True
             
-            # Update UI in the main thread
+
             self.root.after(0, self._update_ui_after_connect)
             
-            # Start position polling
+
             threading.Thread(target=self._poll_position, daemon=True).start()
             
         except Exception as e:
@@ -599,12 +593,11 @@ class IntegratedGantryCameraGUI:
         self.status_var.set("Connected")
         self.status_label.config(bg='#c8e6c9')
         self.set_start_button.config(state=tk.NORMAL)
-        
-        # Update gantry tab buttons
+
         self.gantry_connect_button.config(state=tk.DISABLED)
         self.gantry_disconnect_button.config(state=tk.NORMAL)
         
-        # Update start button state
+
         self.update_start_button_state()
             
     def _poll_position(self):
@@ -617,12 +610,12 @@ class IntegratedGantryCameraGUI:
                     self.current_x = int(x.strip())
                     self.current_y = int(y.strip())
                     
-                    # Update position display in the main thread
+             
                     self.root.after(0, lambda: self.position_var.set(f"X: {self.current_x}, Y: {self.current_y}"))
             except:
                 pass
                 
-            time.sleep(0.2)  # Poll 5 times per second
+            time.sleep(0.2) 
             
     def disconnect_gantry(self):
         """Disconnect from the gantry"""
@@ -633,18 +626,17 @@ class IntegratedGantryCameraGUI:
             self.status_var.set("Disconnecting...")
             self.root.update()
             
-            # Close connection
+
             self.gantry.GClose()
             self.gantry = None
             self.connected = False
             
-            # Update UI
             self.status_var.set("Disconnected")
             self.status_label.config(bg='#ffcccb')
             self.set_start_button.config(state=tk.DISABLED)
             self.start_imaging_button.config(state=tk.DISABLED)
             
-            # Update gantry tab buttons
+
             self.gantry_connect_button.config(state=tk.NORMAL)
             self.gantry_disconnect_button.config(state=tk.DISABLED)
             
@@ -673,7 +665,7 @@ class IntegratedGantryCameraGUI:
             self.status_var.set("Homing...")
             self.root.update()
             
-            # Start homing in a thread
+  
             threading.Thread(target=self._home_thread, daemon=True).start()
         except Exception as e:
             self.status_var.set(f"Homing error: {e}")
@@ -681,7 +673,7 @@ class IntegratedGantryCameraGUI:
     def _home_thread(self):
         """Thread for homing the gantry"""
         try:
-            # Set speed
+            # IMPORTANT Set speed
             self.gantry.GCommand('SP 50000,100000')
             
             # Move a bit to avoid limit switches
@@ -702,7 +694,7 @@ class IntegratedGantryCameraGUI:
             # Set position to 0,0
             self.gantry.GCommand('AM;PT;DP 0,0')
             
-            # Update UI in the main thread
+
             self.root.after(0, lambda: self.status_var.set("Homing complete"))
             
         except Exception as e:
@@ -715,7 +707,7 @@ class IntegratedGantryCameraGUI:
             return
         
         try:
-            # Get settings from UI
+
             port = self.port_var.get()
             baud = int(self.baud_var.get())
             
@@ -723,7 +715,7 @@ class IntegratedGantryCameraGUI:
             self.camera_status_var.set("Connecting...")
             self.root.update()
             
-            # Start connection in a thread
+
             threading.Thread(target=lambda: self._connect_camera_thread(port, baud), daemon=True).start()
             
         except Exception as e:
@@ -732,7 +724,7 @@ class IntegratedGantryCameraGUI:
     def _connect_camera_thread(self, port, baud):
         """Thread for connecting to camera"""
         try:
-            # Connect to camera
+   
             self.ser = serial.Serial(port, baud, timeout=1)
             time.sleep(2)  # Allow time for connection to establish
             
@@ -752,17 +744,17 @@ class IntegratedGantryCameraGUI:
         self.camera_connect_button.config(state=tk.DISABLED)
         self.camera_disconnect_button.config(state=tk.NORMAL)
         
-        # Enable camera control buttons
+
         self.take_photo_button.config(state=tk.NORMAL)
         self.take_photo_filter_button.config(state=tk.NORMAL)
         self.filter_on_button.config(state=tk.NORMAL)
         self.filter_off_button.config(state=tk.NORMAL)
         self.take_both_button.config(state=tk.NORMAL)
         
-        # Update info
+
         self.camera_info_var.set(f"Connected to {self.port_var.get()} at {self.baud_var.get()} baud")
         
-        # Update start button state
+
         self.update_start_button_state()
         
     def disconnect_camera(self):
@@ -778,23 +770,23 @@ class IntegratedGantryCameraGUI:
                 
             self.camera_connected = False
             
-            # Update UI
+
             self.camera_status_var.set("Disconnected")
             self.camera_status_label.config(bg='#ffcccb')
             self.camera_connect_button.config(state=tk.NORMAL)
             self.camera_disconnect_button.config(state=tk.DISABLED)
             
-            # Disable camera control buttons
+
             self.take_photo_button.config(state=tk.DISABLED)
             self.take_photo_filter_button.config(state=tk.DISABLED)
             self.filter_on_button.config(state=tk.DISABLED)
             self.filter_off_button.config(state=tk.DISABLED)
             self.take_both_button.config(state=tk.DISABLED)
             
-            # Update info
+   
             self.camera_info_var.set("Camera not connected")
             
-            # Update start button state
+
             self.update_start_button_state()
             
         except Exception as e:
@@ -804,13 +796,13 @@ class IntegratedGantryCameraGUI:
         """Apply new camera settings and reconnect if already connected"""
         was_connected = self.camera_connected
         
-        # Disconnect if connected
+
         if was_connected:
             self.disconnect_camera()
             
-        # Update parameters
+ 
         try:
-            # Reconnect if was connected
+
             if was_connected:
                 self.connect_camera()
                 
@@ -826,11 +818,11 @@ class IntegratedGantryCameraGUI:
             return False
             
         try:
-            # Send command
+
             self.ser.write((cmd + '\n').encode())
             time.sleep(0.5)
             
-            # Read response
+
             if self.ser.in_waiting:
                 response = self.ser.read(self.ser.in_waiting).decode().strip()
                 self.camera_info_var.set(f"ESP32: {response}")
@@ -847,16 +839,15 @@ class IntegratedGantryCameraGUI:
             return
             
         try:
-            # Create directory for manual photos if not exists
+
             manual_dir = os.path.join(self.session_dir, "manual")
             os.makedirs(manual_dir, exist_ok=True)
-            
-            # If with filter, move filter into position
+
             if with_filter:
                 self.control_filter(True)
-                time.sleep(1)  # Give time for filter to move
+                time.sleep(1) 
                 
-            # Take the photo
+
             success = self.send_camera_command("SHUTTER")
             
             if success:
@@ -887,7 +878,7 @@ class IntegratedGantryCameraGUI:
             return
             
         try:
-            # Create directory for manual photos if not exists
+
             manual_dir = os.path.join(self.session_dir, "manual")
             os.makedirs(manual_dir, exist_ok=True)
             
@@ -982,18 +973,18 @@ class IntegratedGantryCameraGUI:
         if not self.connected:
             return
             
-        # Store current position as start position
+
         self.start_x = self.current_x
         self.start_y = self.current_y
         
-        # Update display
+
         self.start_x_var.set(str(self.start_x))
         self.start_y_var.set(str(self.start_y))
         
-        # Enable start imaging button if other parameters are set
+
         self.update_start_button_state()
         
-        # Enable return to start position button
+
         self.return_to_start_button.config(state=tk.NORMAL)
         
         self.status_var.set(f"Start position set: X={self.start_x}, Y={self.start_y}")
@@ -1006,17 +997,17 @@ class IntegratedGantryCameraGUI:
         try:
             self.status_var.set(f"Returning to start position: X={self.start_x}, Y={self.start_y}")
             
-            # Move to start position
+
             self.gantry.GCommand(f'PA {self.start_x}, {self.start_y};BG')
             
-            # No need to wait for completion as position polling will update the UI
+
         except Exception as e:
             self.status_var.set(f"Return to start error: {e}")
             
     def calculate_grid(self):
         """Calculate imaging grid based on parameters"""
         try:
-            # Get values from UI
+  
             self.overlap = float(self.overlap_var.get()) / 100  # Convert from percentage
             x_dimension_mm = float(self.x_dim_var.get())
             y_dimension_mm = float(self.y_dim_var.get())
@@ -1052,13 +1043,13 @@ class IntegratedGantryCameraGUI:
             x_inc = int(x_step_mm * self.x_scale)
             y_inc = int(y_step_mm * self.y_scale)
             
-            # Store calculated values
+
             self.x_inc = x_inc
             self.y_inc = y_inc
             self.x_steps = x_steps
             self.y_steps = y_steps
             
-            # Update UI
+
             self.grid_size_var.set(f"{x_steps} × {y_steps}")
             self.step_mm_var.set(f"{x_step_mm:.2f} × {y_step_mm:.2f}")
             self.total_images_var.set(str(x_steps * y_steps))
@@ -1100,32 +1091,32 @@ class IntegratedGantryCameraGUI:
                                  f"Mode: {'Automatic' if self.auto_capture.get() else 'Manual'} capture"):
             return
             
-        # Create run-specific directory
+
         run_dir = os.path.join(self.session_dir, f"sequence_{len(os.listdir(self.session_dir))}")
         os.makedirs(run_dir, exist_ok=True)
         self.current_run_dir = run_dir
             
-        # Reset stop flag
+
         self.stop_imaging = False
         self.is_imaging = True
         
-        # Update UI
+
         self.start_imaging_button.config(state=tk.DISABLED)
         self.stop_imaging_button.config(state=tk.NORMAL)
         
-        # Start imaging sequence in a thread
+
         threading.Thread(target=self._imaging_thread, daemon=True).start()
     
     def _show_photo_prompt(self, image_number, position):
         """Shows a photo prompt dialog and handles the response"""
-        # Create a custom dialog
+
         dialog = tk.Toplevel(self.root)
         dialog.title("Take Photo")
         dialog.geometry("350x200")
         dialog.transient(self.root)
-        dialog.grab_set()  # Make the dialog modal
+        dialog.grab_set()  
         
-        # Add dialog content
+
         tk.Label(dialog, text=f"Position {position}", font=('Arial', 14)).pack(pady=5)
         tk.Label(dialog, text=f"Take photos #{image_number} (normal & filtered)", font=('Arial', 12)).pack(pady=5)
         tk.Label(dialog, text="Press Continue when done", font=('Arial', 10)).pack(pady=5)
@@ -1179,7 +1170,7 @@ class IntegratedGantryCameraGUI:
                 self.root.after(0, lambda: self.stop_imaging_button.config(state=tk.DISABLED))
                 return
                 
-            # Start imaging sequence
+
             self.root.after(0, lambda: self.status_var.set("Imaging sequence started"))
             
             image_count = 0
@@ -1211,14 +1202,14 @@ class IntegratedGantryCameraGUI:
                         self.stop_imaging = True
                         break
                         
-                    # Issue move command
+          
                     self.gantry.GCommand(f'PA {aim_x}, {aim_y};BG')
                     
-                    # Update status with current position
+
                     pos_info = f"Moving to position {x},{y}"
                     self.root.after(0, lambda info=pos_info: self.status_var.set(info))
                     
-                    # Wait for move to complete
+
                     is_done = False
                     while not is_done and not self.stop_imaging:
                         pos = self.gantry.GCommand('RP')
@@ -1230,24 +1221,24 @@ class IntegratedGantryCameraGUI:
                     if self.stop_imaging:
                         break
                         
-                    # Increment image counter
+
                     image_count += 1
                     
-                    # Update status with position and image number
+
                     status_info = f"Position {x},{y}: Image #{image_count}"
                     self.root.after(0, lambda info=status_info: self.status_var.set(info))
                     
                     if self.auto_capture.get():
                         # Automatic capture mode
-                        # Take both photos (with and without filter)
+
                         self.take_both_photos()
                         time.sleep(1)  # Brief pause between positions
                     else:
                         # Manual confirmation mode
-                        # Create a user response event and wait for it
+
                         self.waiting_for_photo = True
                         
-                        # Show a prompt on the main thread
+
                         pos_str = f"{x},{y}"
                         self.root.after(0, lambda cnt=image_count, p=pos_str: self._show_photo_prompt(cnt, p))
                         
@@ -1264,7 +1255,7 @@ class IntegratedGantryCameraGUI:
             else:
                 self.root.after(0, lambda: self.status_var.set("Imaging sequence stopped"))
             
-            # Reset UI
+
             self.is_imaging = False
             self.root.after(0, lambda: self.start_imaging_button.config(state=tk.NORMAL))
             self.root.after(0, lambda: self.stop_imaging_button.config(state=tk.DISABLED))
@@ -1295,10 +1286,10 @@ class IntegratedGantryCameraGUI:
             # Set the current position as origin (0,0)
             self.gantry.GCommand('DP 0,0')
             
-            # Update status
+
             self.status_var.set("Position zeroed - current position is now (0,0)")
             
-            # Update display immediately
+
             self.current_x = 0
             self.current_y = 0
             self.position_var.set("X: 0, Y: 0")
